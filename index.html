@@ -1,0 +1,2193 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="吴昊 · 个人主页 — 华中农业大学信息与计算科学专业本科，2027 届推免至武汉大学应用统计专业。">
+    <title>吴昊 · 个人主页 — 在数据与约束之间，求解更优解</title>
+    <link rel="icon" type="image/png" href="assets/logo.png">
+    <style>
+        :root {
+            --ink: #1f2937;
+            --muted: #64748b;
+            --line: #e8dcc8;
+            --paper: #fffdf8;
+            --soft: #fbf6ec;
+            --blue: #2563eb;
+            --blue-soft: #edf3ff;
+            --green: #16855d;
+            --green-soft: #eef6f1;
+            --coral: #d65a3f;
+            --coral-soft: #fff0ec;
+            --amber: #b97912;
+            --amber-soft: #fbf3e2;
+            /* 手账梦幻辅色 */
+            --pink: #c9738f;
+            --pink-soft: #fbeef2;
+            --lav: #8f7bc8;
+            --lav-soft: #f2eefb;
+            --mint: #4fa89b;
+            --mint-soft: #ecf6f4;
+            --shadow: 0 16px 38px rgba(31, 41, 55, 0.10);
+            --ease: cubic-bezier(.22, .61, .36, 1);
+        }
+
+        * { box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            margin: 0;
+            color: var(--ink);
+            background: var(--soft);
+            font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", Arial, sans-serif;
+            line-height: 1.65;
+            position: relative;
+        }
+
+        a { color: inherit; text-decoration: none; }
+
+        img, svg { display: block; max-width: 100%; }
+
+        ::selection { background: rgba(37, 99, 235, .18); }
+
+        /* ---------- 全局手账圆点纸纹（暖棕小圆点，顶部渐隐） ---------- */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background-image:
+                radial-gradient(rgba(196, 148, 96, .17) 1.2px, transparent 1.2px),
+                radial-gradient(rgba(196, 148, 96, .10) 1px, transparent 1px);
+            background-size: 22px 22px, 22px 22px;
+            background-position: 0 0, 11px 11px;
+            -webkit-mask-image: radial-gradient(ellipse 130% 95% at 50% 0%, #000 25%, transparent 88%);
+            mask-image: radial-gradient(ellipse 130% 95% at 50% 0%, #000 25%, transparent 88%);
+        }
+
+        /* ---------- 阅读进度条 ---------- */
+        .progress {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 3px;
+            background: linear-gradient(90deg, var(--blue), #4f8bf5);
+            transform-origin: 0 50%;
+            transform: scaleX(0);
+            z-index: 40;
+        }
+
+        /* ---------- 导航 ---------- */
+        .site-nav {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            border-bottom: 1px solid rgba(217, 225, 234, .9);
+            background: rgba(255, 255, 255, .92);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+        }
+
+        .nav-inner {
+            width: min(1180px, calc(100% - 36px));
+            min-height: 64px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 800;
+            color: var(--blue);
+            white-space: nowrap;
+            font-size: 17px;
+            letter-spacing: .5px;
+        }
+
+        .brand-logo {
+            width: 34px;
+            height: 34px;
+            object-fit: contain;
+            flex: none;
+        }
+
+        .brand small {
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-left: 8px;
+        }
+
+        .nav-links {
+            position: relative;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: 4px;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .nav-links a {
+            position: relative;
+            z-index: 1;
+            padding: 8px 10px;
+            border-radius: 8px;
+            transition: color .25s var(--ease);
+        }
+
+        .nav-links a:hover, .nav-links a.active { color: var(--blue); }
+
+        .nav-pill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            border-radius: 8px;
+            background: var(--blue-soft);
+            opacity: 0;
+            pointer-events: none;
+            transition: transform .38s var(--ease), width .38s var(--ease), height .38s var(--ease), opacity .3s var(--ease);
+        }
+
+        .nav-cta { padding: 8px 18px; font-size: 13px; }
+
+        /* ---------- 布局 ---------- */
+        .section {
+            position: relative;
+            isolation: isolate;
+            padding: 76px 0;
+            background: linear-gradient(180deg, #f5f7fb, #edf2f9);
+        }
+
+        .section.alt { background: linear-gradient(180deg, #fdf9f0, #f9f2e4); }
+
+        .container {
+            width: min(1180px, calc(100% - 36px));
+            margin: 0 auto;
+        }
+
+        section { scroll-margin-top: 76px; }
+
+        .eyebrow {
+            color: var(--green);
+            font-size: 14px;
+            font-weight: 800;
+            margin: 0 0 12px;
+            letter-spacing: 1px;
+        }
+
+        h1, h2, h3, p { margin-top: 0; }
+
+        h1 { margin-bottom: 18px; font-size: 46px; line-height: 1.16; }
+
+        h2 { margin-bottom: 10px; font-size: 30px; line-height: 1.24; }
+
+        .lead { color: var(--muted); font-size: 17px; margin-bottom: 28px; }
+
+        .section-head { max-width: 780px; margin-bottom: 28px; }
+
+        .section-head p { color: var(--muted); margin-bottom: 0; }
+
+        /* ---------- Hero ---------- */
+        .hero {
+            position: relative;
+            isolation: isolate;
+            min-height: calc(100vh - 64px);
+            display: grid;
+            grid-template-columns: minmax(0, 0.86fr) minmax(420px, 1.14fr);
+            gap: 42px;
+            align-items: center;
+            padding: 54px 0 70px;
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .button {
+            display: inline-flex;
+            min-height: 42px;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 0 16px;
+            background: var(--paper);
+            color: var(--ink);
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            font-family: inherit;
+            position: relative;
+            overflow: hidden;
+            isolation: isolate;
+            transition: transform .28s var(--ease), box-shadow .28s var(--ease), border-color .28s var(--ease), background .28s var(--ease), color .28s var(--ease);
+        }
+
+        .button.primary {
+            border-color: var(--blue);
+            background: var(--blue);
+            color: #fff;
+        }
+
+        .button.primary:hover { box-shadow: 0 12px 26px rgba(37, 99, 235, .32); }
+
+        .button:hover { transform: translateY(-2px); }
+
+        .button.ghost:hover { border-color: var(--blue); color: #fff; }
+
+        .button.ghost::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            background: var(--blue);
+            transform: translateY(101%);
+            transition: transform .38s var(--ease);
+        }
+
+        .button.ghost:hover::before { transform: translateY(0); }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .stat {
+            position: relative;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 14px;
+            background: rgba(255, 255, 255, .72);
+            transition: transform .3s var(--ease), box-shadow .3s var(--ease), border-color .3s var(--ease);
+        }
+
+        .stat:hover { transform: translateY(-3px); box-shadow: 0 12px 24px rgba(31, 41, 55, .09); border-color: rgba(37, 99, 235, .35); }
+
+        .stat strong {
+            display: block;
+            color: var(--blue);
+            font-size: 22px;
+            line-height: 1.1;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .stat span { color: var(--muted); font-size: 13px; }
+
+        .hero-visual {
+            overflow: hidden;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--paper);
+            box-shadow: var(--shadow);
+            margin: 0;
+            transform: translateY(var(--py, 0px));
+            transition: transform .16s linear, box-shadow .4s var(--ease);
+        }
+
+        .hero-visual:hover { transform: translateY(var(--py, 0px)) translateY(-4px); box-shadow: 0 26px 52px rgba(31, 41, 55, .16); }
+
+        .hero-visual svg { width: 100%; aspect-ratio: 16 / 10; background: #fff; }
+
+        .caption {
+            border-top: 1px solid var(--line);
+            padding: 12px 16px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        /* ---------- 卡片 ---------- */
+        .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+
+        .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+
+        .card {
+            position: relative;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--paper);
+            box-shadow: 0 8px 22px rgba(31, 41, 55, .06);
+            overflow: hidden;
+            transition: transform .35s var(--ease), box-shadow .35s var(--ease), border-color .35s var(--ease);
+        }
+
+        .card:hover { transform: translateY(-5px); box-shadow: 0 22px 44px rgba(31, 41, 55, .14); border-color: rgba(37, 99, 235, .35); }
+
+        .card .accent-bar { transform: scaleX(.22); transform-origin: left center; transition: transform .45s var(--ease); }
+
+        .card:hover .accent-bar { transform: scaleX(1); }
+
+        .card-body { padding: 22px; }
+
+        .card h3 { margin-bottom: 10px; font-size: 20px; }
+
+        .card p, .card li { color: var(--muted); }
+
+        .figure-card svg {
+            width: 100%;
+            aspect-ratio: 16 / 10;
+            background: #fff;
+            border-bottom: 1px solid var(--line);
+            transition: transform .6s var(--ease);
+        }
+
+        .figure-card:hover svg { transform: scale(1.035); }
+
+        /* ---------- 素材图帧（真实科研 / 项目配图） ---------- */
+        .material-frame {
+            background: #fff;
+            border-bottom: 1px solid var(--line);
+            overflow: hidden;
+            line-height: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .material-frame img {
+            max-width: 100%;
+            max-height: 330px;
+            width: auto;
+            height: auto;
+            border-radius: 4px;
+            transition: transform .6s var(--ease);
+        }
+
+        .figure-card:hover .material-frame img { transform: scale(1.03); }
+
+        /* ---------- 全幅素材图卡（证书汇总 / 实践图集 · 拍立得贴纸感） ---------- */
+        .photo-card {
+            border: none;
+            border-radius: 6px;
+            background: var(--paper);
+            padding: 10px 10px 34px;
+            box-shadow: 0 12px 28px rgba(31, 41, 55, .10);
+            overflow: hidden;
+            transition: transform .35s var(--ease), box-shadow .35s var(--ease);
+        }
+
+        .photo-card:nth-child(odd) { transform: rotate(-.55deg); }
+        .photo-card:nth-child(even) { transform: rotate(.5deg); }
+
+        .photo-card:hover { transform: rotate(0deg) translateY(-5px); box-shadow: 0 20px 40px rgba(31, 41, 55, .16); }
+
+        .photo-card img { width: 100%; height: auto; display: block; border-radius: 3px; }
+
+        /* ---------- Hero 身份行（证件照） ---------- */
+        .hero-id {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .hero-portrait {
+            width: 66px;
+            height: 88px;
+            flex: none;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--line);
+            box-shadow: 0 10px 24px rgba(31, 41, 55, .14);
+            background: #fff;
+        }
+
+        .hero-portrait img { width: 100%; height: 100%; object-fit: cover; }
+
+        .hero-id-text { display: flex; flex-direction: column; gap: 3px; }
+
+        .hero-id-text .name { font-size: 16px; font-weight: 800; color: var(--ink); letter-spacing: 2px; }
+
+        .hero-id-text .role { font-size: 12px; color: var(--muted); font-weight: 700; letter-spacing: .5px; }
+
+        .hero-id-text .role b { color: var(--blue); font-weight: 800; }
+
+        /* ---------- 选项卡内真实配图 ---------- */
+        .tab-figure img {
+            width: 100%;
+            height: auto;
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+        }
+
+        /* ---------- 综合发展（志愿服务 / 社会实践） ---------- */
+        .dev-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+
+        .dev-item {
+            border: 1px solid var(--line);
+            border-left: 4px solid var(--blue);
+            border-radius: 8px;
+            background: var(--paper);
+            padding: 20px;
+            box-shadow: 0 8px 22px rgba(31, 41, 55, .06);
+            transition: transform .3s var(--ease), box-shadow .3s var(--ease);
+        }
+
+        .dev-item:nth-child(2) { border-left-color: var(--green); }
+
+        .dev-item:hover { transform: translateY(-3px); box-shadow: 0 14px 30px rgba(31, 41, 55, .11); }
+
+        .dev-item h4 { font-size: 15px; font-weight: 800; margin-bottom: 6px; }
+
+        .dev-item .dev-time { color: var(--muted); font-size: 12px; font-weight: 700; letter-spacing: .5px; }
+
+        .dev-item p { color: var(--muted); font-size: 13px; margin: 8px 0 0; }
+
+        .link-row {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 12px;
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--blue);
+            border: 1px solid rgba(37, 99, 235, .22);
+            background: var(--blue-soft);
+            border-radius: 999px;
+            padding: 5px 13px;
+            transition: transform .25s var(--ease), background .25s var(--ease);
+        }
+
+        .link-row:hover { transform: translateY(-2px); background: rgba(37, 99, 235, .14); }
+
+        /* ---------- 课余游戏卡 ---------- */
+        .game-card {
+            display: grid;
+            grid-template-columns: minmax(0, 170px) minmax(0, 1fr);
+            gap: 22px;
+            align-items: center;
+        }
+
+        .game-card .shot {
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--line);
+            line-height: 0;
+        }
+
+        .game-card .shot img { width: 100%; height: auto; }
+
+        .tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+
+        .tag {
+            border-radius: 999px;
+            padding: 4px 10px;
+            background: var(--green-soft);
+            color: var(--green);
+            font-size: 12px;
+            font-weight: 800;
+            transition: transform .25s var(--ease);
+        }
+
+        .tag:hover { transform: translateY(-2px) scale(1.07); }
+
+        .tag.blue { background: var(--blue-soft); color: var(--blue); }
+        .tag.coral { background: var(--coral-soft); color: var(--coral); }
+        .tag.amber { background: var(--amber-soft); color: var(--amber); }
+
+        .accent-bar { width: 28px; height: 3px; border-radius: 2px; background: var(--blue); margin-bottom: 14px; }
+        .accent-bar.green { background: var(--green); }
+        .accent-bar.coral { background: var(--coral); }
+
+        .big-value { font-size: 32px; font-weight: 800; line-height: 1.1; color: var(--ink); font-variant-numeric: tabular-nums; }
+        .big-value.blue { color: var(--blue); }
+        .big-value.green { color: var(--green); }
+
+        .sub-label { color: var(--muted); font-size: 13px; margin-top: 6px; }
+
+        /* ---------- 信息面板（关于我） ---------- */
+        .info-panel {
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--paper);
+            padding: 8px 20px;
+            box-shadow: 0 8px 22px rgba(31, 41, 55, .06);
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--line);
+            transition: padding .25s var(--ease), border-color .25s var(--ease);
+        }
+
+        .info-row:hover { padding-left: 12px; border-color: rgba(37, 99, 235, .32); }
+
+        .info-row:last-child { border-bottom: none; }
+
+        .info-row .k { color: var(--muted); font-size: 14px; white-space: nowrap; }
+
+        .info-row .v { font-weight: 700; font-size: 14px; text-align: right; }
+
+        .info-row .v.accent { color: var(--blue); }
+
+        /* ---------- 学科成绩 ---------- */
+        .course-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 40px; }
+
+        .course-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 13px 0;
+            border-bottom: 1px solid var(--line);
+            transition: padding .25s var(--ease), border-color .25s var(--ease);
+        }
+
+        .course-row:hover { padding-left: 12px; border-color: rgba(37, 99, 235, .32); }
+
+        .course-row .name { font-size: 14px; }
+
+        .course-row .score { color: var(--blue); font-weight: 800; font-size: 16px; font-variant-numeric: tabular-nums; }
+
+        /* ---------- Notes 网格 ---------- */
+        .notes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+
+        .note {
+            position: relative;
+            border-left: 4px solid var(--blue);
+            border-radius: 8px;
+            background: var(--paper);
+            padding: 16px;
+            color: var(--muted);
+            font-size: 13px;
+            box-shadow: 0 8px 22px rgba(31, 41, 55, .06);
+            transition: transform .3s var(--ease), box-shadow .3s var(--ease);
+        }
+
+        .note:hover { transform: translateY(-4px); box-shadow: 0 16px 32px rgba(31, 41, 55, .12); }
+
+        .note strong { display: block; color: var(--ink); margin-bottom: 4px; font-size: 15px; }
+
+        .note.green { border-left-color: var(--green); }
+        .note.coral { border-left-color: var(--coral); }
+        .note.amber { border-left-color: var(--amber); }
+
+        /* ---------- 选项卡（竞赛） ---------- */
+        .result-layout {
+            display: grid;
+            grid-template-columns: 300px minmax(0, 1fr);
+            gap: 22px;
+            align-items: start;
+        }
+
+        .dataset-panel {
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--paper);
+            padding: 14px;
+            box-shadow: 0 8px 22px rgba(31, 41, 55, .06);
+        }
+
+        .dataset-button {
+            width: 100%;
+            min-height: 54px;
+            margin-bottom: 10px;
+            justify-content: flex-start;
+            text-align: left;
+            color: var(--muted);
+            font-weight: 700;
+        }
+
+        .dataset-button:last-child { margin-bottom: 0; }
+
+        .dataset-button:hover { border-color: rgba(37, 99, 235, .4); color: var(--blue); transform: translateX(4px); }
+
+        .dataset-button.active {
+            border-color: var(--blue);
+            background: var(--blue-soft);
+            color: var(--blue);
+            box-shadow: 0 8px 18px rgba(37, 99, 235, .14);
+        }
+
+        .result-view {
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            overflow: hidden;
+            background: var(--paper);
+            box-shadow: var(--shadow);
+        }
+
+        .tab-figure { display: none; }
+
+        .tab-figure.active { display: block; animation: figIn .45s var(--ease); }
+
+        @keyframes figIn {
+            from { opacity: 0; transform: translateY(10px) scale(.99); }
+            to { opacity: 1; transform: none; }
+        }
+
+        .tab-figure svg { width: 100%; aspect-ratio: 16 / 10; background: #fff; }
+
+        /* ---------- 竞赛数据面板（华中杯 · 数据说话） ---------- */
+        .data-panel {
+            aspect-ratio: 16 / 10;
+            background:
+                radial-gradient(rgba(196, 148, 96, .12) 1px, transparent 1px) 0 0 / 20px 20px,
+                linear-gradient(180deg, #fffdf8, #fdf6ea);
+            border: 1.5px dashed rgba(196, 148, 96, .55);
+            border-radius: 16px 20px 17px 22px / 20px 16px 22px 18px;
+            padding: 30px 36px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 11px;
+        }
+
+        .data-row { display: flex; align-items: baseline; gap: 14px; font-size: 13.5px; line-height: 1.55; }
+
+        .data-row .k {
+            flex: 0 0 46px;
+            color: var(--muted);
+            font-weight: 800;
+            font-size: 12px;
+            letter-spacing: 2px;
+        }
+
+        .data-row .v { color: var(--ink); }
+        .data-row .v b { color: var(--blue); font-weight: 800; }
+        .data-row .v .pct { color: var(--coral); font-weight: 800; }
+
+        .data-formula {
+            margin-top: 4px;
+            padding-top: 12px;
+            border-top: 1px dashed rgba(196, 148, 96, .45);
+            color: var(--muted);
+            font-family: Georgia, "Times New Roman", serif;
+            font-style: italic;
+            font-size: 14.5px;
+        }
+
+        .result-meta {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 18px;
+            align-items: center;
+            border-top: 1px solid var(--line);
+            padding: 18px 20px;
+            transition: opacity .18s var(--ease), transform .18s var(--ease);
+        }
+
+        .result-meta.swap { opacity: 0; transform: translateY(6px); }
+
+        .result-meta h3 { margin-bottom: 6px; font-size: 19px; }
+
+        .result-meta p { color: var(--muted); margin-bottom: 0; font-size: 14px; }
+
+        .score-pill {
+            min-width: 118px;
+            border-radius: 8px;
+            padding: 10px 12px;
+            background: var(--green-soft);
+            color: var(--green);
+            text-align: center;
+            font-weight: 800;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .score-pill.blue { background: var(--blue-soft); color: var(--blue); }
+        .score-pill.amber { background: var(--amber-soft); color: var(--amber); }
+        .score-pill.coral { background: var(--coral-soft); color: var(--coral); }
+
+        /* ---------- 指标芯片 ---------- */
+        .metric-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+
+        .metric-chip {
+            border-radius: 8px;
+            padding: 6px 12px;
+            background: var(--blue-soft);
+            color: var(--blue);
+            font-size: 12px;
+            font-weight: 800;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .metric-chip.green { background: var(--green-soft); color: var(--green); }
+
+        /* ---------- 模型精度对比表（X 光检测） ---------- */
+        .vs-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px dashed rgba(196, 148, 96, .5);
+            font-size: 12px;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .vs-table th, .vs-table td { padding: 6px 4px; text-align: right; white-space: nowrap; }
+        .vs-table th:first-child, .vs-table td:first-child { text-align: left; white-space: normal; }
+        .vs-table thead th {
+            color: var(--muted);
+            font-size: 10.5px;
+            font-weight: 600;
+            letter-spacing: .5px;
+            border-bottom: 1px solid var(--line);
+            padding-bottom: 8px;
+        }
+        .vs-table tbody tr { border-bottom: 1px dashed rgba(196, 148, 96, .35); }
+        .vs-table tbody tr:last-child { border-bottom: none; }
+        .vs-table tbody td { color: var(--muted); }
+        .vs-table tbody td:first-child { color: var(--ink); }
+        .vs-table tr.best td { color: var(--blue); font-weight: 800; }
+        .vs-table .ours {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 7px;
+            border-radius: 99px;
+            background: var(--blue);
+            color: #fff;
+            font-size: 9.5px;
+            font-weight: 700;
+            letter-spacing: .5px;
+            vertical-align: 1px;
+        }
+
+        /* ---------- 类别级检测精度（X 光检测） ---------- */
+        .class-block { margin-top: 14px; padding-top: 12px; border-top: 1px dashed rgba(196, 148, 96, .5); }
+        .class-title { font-size: 10.5px; font-weight: 700; color: var(--muted); letter-spacing: 1px; margin-bottom: 8px; }
+        .class-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .class-cell {
+            padding: 8px 10px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, .72);
+            border: 1px solid var(--line);
+        }
+        .class-cell .c { display: block; font-size: 10px; color: var(--muted); font-weight: 600; letter-spacing: .3px; }
+        .class-cell .n {
+            display: block;
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--ink);
+            font-family: "Inter Tight", Inter, sans-serif;
+            margin-top: 2px;
+        }
+        .class-cell.best { border-color: rgba(37, 99, 235, .35); background: var(--blue-soft); }
+        .class-cell.best .n { color: var(--blue); }
+
+        .vs-note { margin-top: 10px; color: var(--muted); font-size: 12.5px; line-height: 1.6; }
+
+        /* ---------- 技术栈 ---------- */
+        .tech-wrap { display: flex; flex-wrap: wrap; gap: 10px; }
+
+        .tech-chip {
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 9px 16px;
+            background: var(--paper);
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--muted);
+            transition: transform .25s var(--ease), border-color .25s var(--ease), color .25s var(--ease);
+        }
+
+        .tech-chip:hover { transform: translateY(-3px); border-color: var(--blue); color: var(--blue); }
+
+        .tech-chip.accent { background: var(--blue-soft); border-color: transparent; color: var(--blue); }
+        .tech-chip.accent-green { background: var(--green-soft); border-color: transparent; color: var(--green); }
+
+        /* ---------- 联系我 ---------- */
+        .contact-card {
+            position: relative;
+            overflow: hidden;
+            max-width: 820px;
+            margin: 0 auto;
+            background:
+                radial-gradient(rgba(37, 99, 235, .09) 1px, transparent 1px) 0 0 / 22px 22px,
+                linear-gradient(180deg, #ffffff, #f5f8fd);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            padding: 56px 48px;
+            text-align: center;
+            transition: transform .4s var(--ease), box-shadow .4s var(--ease);
+        }
+
+        .contact-card:hover { transform: translateY(-4px); box-shadow: 0 28px 56px rgba(31, 41, 55, .16); }
+
+        .contact-card h2 { font-size: 30px; }
+
+        .contact-card p { color: var(--muted); margin-bottom: 26px; }
+
+        .email-button {
+            display: inline-flex;
+            min-height: 52px;
+            align-items: center;
+            padding: 0 32px;
+            border-radius: 10px;
+            background: var(--blue);
+            color: #fff;
+            font-weight: 800;
+            font-size: 17px;
+            letter-spacing: .5px;
+            box-shadow: 0 10px 24px rgba(37, 99, 235, .28);
+            transition: transform .28s var(--ease), box-shadow .28s var(--ease);
+        }
+
+        .email-button:hover { transform: translateY(-3px); box-shadow: 0 16px 34px rgba(37, 99, 235, .38); }
+
+        .contact-meta { margin-top: 22px; color: var(--muted); font-size: 13px; }
+
+        /* ---------- 页脚 ---------- */
+        .footer {
+            position: relative;
+            overflow: hidden;
+            background: #1f2937;
+            color: #d9e1ea;
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        .footer::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(640px 300px at 50% 0%, rgba(37, 99, 235, .20), transparent 70%);
+            pointer-events: none;
+        }
+
+        .foot-mark {
+            font-size: 38px;
+            font-weight: 800;
+            letter-spacing: 12px;
+            color: #f8fafc;
+            margin-bottom: 8px;
+            text-indent: 12px;
+        }
+
+        .foot-links { font-size: 13px; color: #aab4c4; letter-spacing: 2px; margin-bottom: 10px; }
+
+        .foot-links a { color: #aab4c4; transition: color .25s var(--ease); }
+
+        .foot-links a:hover { color: #ffffff; }
+
+        .foot-links i { font-style: normal; color: rgba(170, 180, 196, .5); margin: 0 2px; }
+
+        .foot-copy { font-size: 12px; color: #7d8a9c; letter-spacing: 1px; }
+
+        /* ---------- 滚动显现（方向感知） ---------- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(26px) scale(.985);
+            transition: opacity .8s var(--ease), transform .8s var(--ease);
+        }
+
+        .reveal.from-left { transform: translateX(-36px) scale(.99); }
+        .reveal.from-right { transform: translateX(36px) scale(.99); }
+
+        .reveal.in { opacity: 1; transform: none; }
+
+        /* 带 reveal 的卡片用更快的 transform 过渡，保证倾斜跟手 */
+        .card.reveal, .note.reveal, .stat.reveal {
+            transition: opacity .7s var(--ease), transform .35s var(--ease), box-shadow .35s var(--ease), border-color .35s var(--ease);
+        }
+
+        /* ---------- Hero 入场编排 ---------- */
+        html.js .hero-anim { opacity: 0; transform: translateY(20px); }
+
+        html.js .hero-in .hero-anim { animation: heroIn .85s var(--ease) forwards; }
+
+        @keyframes heroIn { to { opacity: 1; transform: none; } }
+
+        html.js .line-mask { display: block; overflow: hidden; padding-bottom: .14em; margin-bottom: -.14em; }
+
+        html.js .line-inner { display: block; transform: translateY(115%); opacity: 0; }
+
+        html.js .hero-in .line-inner { animation: lineUp .95s var(--ease) forwards; }
+
+        @keyframes lineUp { to { transform: translateY(0); opacity: 1; } }
+
+        html.js .hero-visual { clip-path: inset(0 0 100% 0); }
+
+        html.js .hero-in .hero-visual { animation: heroWipe 1s var(--ease) .35s forwards; }
+
+        @keyframes heroWipe { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0 0 0 0); } }
+
+        /* ---------- 背景氛围系统 ---------- */
+
+        /* 全局颗粒质感（纸纤维，awwwards 浅色站常用手法） */
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            opacity: .055;
+            mix-blend-mode: multiply;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
+
+        /* 区块手账横线纸纹（暖棕细线，上下缘自然淡出） */
+        .section::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            background-image:
+                linear-gradient(rgba(196, 148, 96, .10) 1px, transparent 1px),
+                radial-gradient(rgba(196, 148, 96, .13) 1.1px, transparent 1.1px);
+            background-size: 100% 26px, 22px 22px;
+            -webkit-mask-image: linear-gradient(180deg, transparent, #000 16%, #000 84%, transparent);
+            mask-image: linear-gradient(180deg, transparent, #000 16%, #000 84%, transparent);
+        }
+
+        /* 区块氛围光（手账梦幻色 · 多层错位柔光） */
+        .section::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            background:
+                radial-gradient(640px 440px at 100% 0%, rgba(201, 115, 143, .10), transparent 68%),
+                radial-gradient(460px 340px at 4% 96%, rgba(143, 123, 200, .09), transparent 70%);
+        }
+
+        #grades::after { background:
+                radial-gradient(560px 420px at 0% 24%, rgba(143, 123, 200, .11), transparent 68%),
+                radial-gradient(420px 320px at 96% 88%, rgba(201, 115, 143, .09), transparent 70%); }
+        #comp::after { background:
+                radial-gradient(640px 420px at 100% 0%, rgba(37, 99, 235, .07), transparent 66%),
+                radial-gradient(480px 340px at 2% 92%, rgba(201, 115, 143, .09), transparent 70%); }
+        #research::after { background:
+                radial-gradient(620px 440px at 0% 20%, rgba(79, 168, 155, .10), transparent 68%),
+                radial-gradient(560px 400px at 100% 4%, rgba(143, 123, 200, .10), transparent 70%),
+                radial-gradient(420px 300px at 88% 96%, rgba(245, 217, 168, .16), transparent 72%); }
+        #projects::after { background:
+                radial-gradient(640px 420px at 100% 0%, rgba(245, 217, 168, .18), transparent 68%),
+                radial-gradient(480px 360px at 0% 96%, rgba(201, 115, 143, .09), transparent 70%); }
+        #campus::after { background:
+                radial-gradient(600px 420px at 0% 24%, rgba(201, 115, 143, .10), transparent 68%),
+                radial-gradient(480px 340px at 98% 92%, rgba(79, 168, 155, .09), transparent 70%); }
+        #contact::after { background:
+                radial-gradient(720px 480px at 50% 0%, rgba(143, 123, 200, .11), transparent 70%),
+                radial-gradient(560px 380px at 50% 104%, rgba(201, 115, 143, .09), transparent 72%); }
+
+        /* 巨型幽灵序号（暖棕手账感） */
+        .ghost-num {
+            position: absolute;
+            top: 36px;
+            right: 20px;
+            z-index: -1;
+            font-size: 148px;
+            font-weight: 800;
+            line-height: 1;
+            letter-spacing: -8px;
+            color: rgba(196, 148, 96, .13);
+            pointer-events: none;
+            user-select: none;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Hero：暖色点阵 + 梦幻四色柔光 */
+        .hero::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            background-image: radial-gradient(rgba(196, 148, 96, .22) 1.2px, transparent 1.2px);
+            background-size: 24px 24px;
+            -webkit-mask-image: radial-gradient(ellipse 85% 75% at 68% 42%, #000 25%, transparent 78%);
+            mask-image: radial-gradient(ellipse 85% 75% at 68% 42%, #000 25%, transparent 78%);
+        }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            background:
+                radial-gradient(620px 440px at 92% 2%, rgba(201, 115, 143, .16), transparent 70%),
+                radial-gradient(520px 400px at 0% 100%, rgba(143, 123, 200, .13), transparent 70%),
+                radial-gradient(380px 300px at 46% 8%, rgba(245, 217, 168, .16), transparent 72%),
+                radial-gradient(300px 260px at 78% 88%, rgba(79, 168, 155, .08), transparent 74%);
+        }
+
+        /* Hero：手账涂鸦漂浮层（星星 / 圆环 / 虚线笔触） */
+        .doodle {
+            position: absolute;
+            z-index: -1;
+            pointer-events: none;
+            opacity: .5;
+        }
+
+        .doodle.d1 { top: 12%; left: 6%; animation: floaty 7s ease-in-out infinite; }
+        .doodle.d2 { top: 66%; left: 12%; animation: floaty 9s ease-in-out 1.2s infinite; }
+        .doodle.d3 { top: 20%; right: 8%; animation: floaty 8s ease-in-out .6s infinite; }
+        .doodle.d4 { bottom: 14%; right: 14%; animation: floaty 10s ease-in-out 1.8s infinite; }
+        .doodle.d5 { top: 44%; left: 44%; animation: floaty 11s ease-in-out .9s infinite; }
+
+        @keyframes floaty {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(3deg); }
+        }
+
+        /* 和纸胶带条（手账灵魂元素） */
+        .washi {
+            position: absolute;
+            z-index: 2;
+            width: 108px;
+            height: 26px;
+            pointer-events: none;
+            opacity: .82;
+            background-repeat: no-repeat;
+            background-size: cover;
+            box-shadow: 0 2px 6px rgba(31, 41, 55, .08);
+        }
+
+        .washi::before, .washi::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 8px;
+            background: inherit;
+        }
+
+        .washi::before { left: -7px; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 30% 50%); }
+        .washi::after { right: -7px; clip-path: polygon(0 0, 100% 0, 70% 50%, 100% 100%, 0 100%); }
+
+        .washi.pink {
+            background: linear-gradient(105deg, rgba(251, 207, 220, .92), rgba(244, 183, 199, .92));
+            transform: rotate(-8deg);
+        }
+
+        .washi.lav {
+            background: linear-gradient(105deg, rgba(214, 205, 240, .92), rgba(190, 178, 230, .92));
+            transform: rotate(6deg);
+        }
+
+        .washi.mint {
+            background: linear-gradient(105deg, rgba(196, 228, 222, .92), rgba(163, 214, 205, .92));
+            transform: rotate(-5deg);
+        }
+
+        .washi.cream {
+            background: linear-gradient(105deg, rgba(250, 231, 190, .94), rgba(243, 214, 156, .94));
+            transform: rotate(7deg);
+        }
+
+        /* ---------- 便签化 notes（微倾斜 + 顶部迷你胶带） ---------- */
+        .notes .note:nth-child(odd) { transform: rotate(-.5deg); }
+        .notes .note:nth-child(even) { transform: rotate(.4deg); }
+
+        .note::before {
+            content: "";
+            position: absolute;
+            top: -9px;
+            left: 50%;
+            width: 46px;
+            height: 16px;
+            margin-left: -23px;
+            background: linear-gradient(105deg, rgba(250, 231, 190, .95), rgba(243, 214, 156, .95));
+            box-shadow: 0 2px 5px rgba(31, 41, 55, .10);
+            transform: rotate(-3deg);
+        }
+
+        .note:hover { transform: rotate(0deg) translateY(-4px); }
+
+        /* ---------- 章节标题手绘荧光笔 ---------- */
+        .section-head h2 {
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-head h2::after {
+            content: "";
+            position: absolute;
+            left: -2px;
+            right: -2px;
+            bottom: 2px;
+            height: 12px;
+            background: linear-gradient(90deg, rgba(245, 217, 168, .8), rgba(251, 207, 220, .65));
+            border-radius: 8px 12px 9px 14px / 10px 8px 12px 9px;
+            transform: rotate(-.4deg);
+            z-index: -1;
+        }
+
+        /* ---------- 联系卡：手绘虚线边框 + 奶油点阵 ---------- */
+        .contact-card {
+            background:
+                radial-gradient(rgba(196, 148, 96, .18) 1px, transparent 1px) 0 0 / 22px 22px,
+                linear-gradient(180deg, #fffdf8, #fdf6ea);
+            border: 1.5px dashed rgba(196, 148, 96, .6);
+            border-radius: 18px 24px 20px 26px / 24px 18px 26px 20px;
+        }
+
+        /* ---------- 拍立得叠放相纸（背后垫一张旋转白卡） ---------- */
+        .photo-card {
+            position: relative;
+            overflow: visible;
+        }
+
+        .photo-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: #fffdf8;
+            border-radius: 6px;
+            box-shadow: 0 8px 18px rgba(31, 41, 55, .08);
+            transform: rotate(2.2deg);
+            z-index: 0;
+        }
+
+        .photo-card img { position: relative; z-index: 1; }
+
+        /* ---------- 章节漂浮贴纸定位（每章两个，位置错开） ---------- */
+        .doodle.s1 { top: 14%; left: 3.5%; }
+        .doodle.s2 { bottom: 16%; right: 4%; }
+        .doodle.s3 { top: 46%; right: 7%; }
+        .doodle.s4 { bottom: 8%; left: 7%; }
+
+        /* Hero：蓝图式等值线装饰 */
+        .hero-decor {
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .hero-decor svg { width: 100%; height: 100%; }
+
+        @media (prefers-reduced-motion: reduce) {
+            .reveal { opacity: 1; transform: none; transition: none; }
+            html.js .hero-anim { opacity: 1; transform: none; animation: none; }
+            html.js .line-inner { opacity: 1; transform: none; animation: none; }
+            html.js .hero-visual { clip-path: none; animation: none; }
+            .nav-pill { transition: none; }
+            html { scroll-behavior: auto; }
+        }
+
+        /* ---------- 响应式 ---------- */
+        @media (max-width: 980px) {
+            .hero, .result-layout, .grid-2, .grid-3, .notes, .course-grid, .dev-grid, .game-card {
+                grid-template-columns: 1fr;
+            }
+            .hero { min-height: auto; padding-top: 36px; }
+            h1 { font-size: 36px; }
+            .nav-inner { align-items: flex-start; flex-direction: column; padding: 12px 0; gap: 10px; }
+            .nav-links { justify-content: flex-start; }
+            .course-grid { gap: 0; }
+        }
+
+        @media (max-width: 640px) {
+            .section { padding: 54px 0; }
+            .container, .nav-inner { width: min(100% - 24px, 1180px); }
+            .stats { grid-template-columns: 1fr; }
+            h1 { font-size: 31px; }
+            .lead { font-size: 16px; }
+            .result-meta { grid-template-columns: 1fr; }
+            .contact-card { padding: 36px 24px; }
+            .foot-mark { font-size: 30px; letter-spacing: 8px; }
+            .ghost-num { font-size: 88px; top: 18px; right: 12px; letter-spacing: -4px; }
+        }
+
+        @media print {
+            .site-nav, .progress { display: none; }
+            .section { padding: 24px 0; }
+            html.js .hero-anim, html.js .line-inner { opacity: 1; transform: none; animation: none; }
+            html.js .hero-visual { clip-path: none; animation: none; }
+            .reveal { opacity: 1; transform: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress" id="progress"></div>
+
+    <nav class="site-nav">
+        <div class="nav-inner">
+            <a class="brand" href="#home"><img class="brand-logo" src="assets/logo.png" alt="吴昊 · WH Logo">吴昊 · WU HAO<small>PERSONAL SITE</small></a>
+            <div class="nav-links">
+                <a href="#about">关于</a>
+                <a href="#grades">成绩</a>
+                <a href="#comp">竞赛</a>
+                <a href="#research">科研</a>
+                <a href="#projects">项目</a>
+                <a href="#campus">学生工作</a>
+                <a href="#contact">联系</a>
+            </div>
+            <a class="button primary nav-cta" href="#contact">联系我</a>
+        </div>
+    </nav>
+
+    <header id="home" class="container hero">
+        <div>
+            <div class="hero-id">
+                <div class="hero-portrait"><img src="assets/portrait.png" alt="吴昊 · 证件照"></div>
+                <div class="hero-id-text">
+                    <span class="name">吴昊 · WU HAO</span>
+                    <span class="role">华中农业大学 · 信息与计算科学 · <b>2027 届推免</b></span>
+                </div>
+            </div>
+            <p class="eyebrow">推免去向 · 武汉大学 应用统计</p>
+            <h1>在数据与约束之间，<br>求解更优解。</h1>
+            <p class="lead">
+                吴昊 — 华中农业大学信息与计算科学专业本科，GPA 3.85/4、专业前 5%。热爱建模、数据与代码：用数学理解世界，用工程解决问题。
+            </p>
+            <div class="hero-actions">
+                <a class="button primary" href="#comp">查看核心经历</a>
+                <a class="button ghost" href="#contact">联系我</a>
+            </div>
+            <div class="stats">
+                <div class="stat">
+                    <strong data-count="3.85" data-decimals="2">3.85</strong>
+                    <span>/4 · GPA 专业前 5%</span>
+                </div>
+                <div class="stat">
+                    <strong data-count="90.47" data-decimals="2">90.47</strong>
+                    <span>加权均分 · 排名 4/101</span>
+                </div>
+                <div class="stat">
+                    <strong>Finalist</strong>
+                    <span>MCM 2026 · 特等奖提名</span>
+                </div>
+            </div>
+        </div>
+        <figure class="hero-visual" style="position: relative;">
+            <span class="washi cream" style="top: 26px; left: -18px;" aria-hidden="true"></span>
+            <svg viewBox="0 0 640 400" font-family="Microsoft YaHei, PingFang SC, Noto Sans CJK SC, Arial, sans-serif" role="img" aria-label="学术能力画像雷达图">
+                <text x="32" y="36" font-size="11" letter-spacing="3" fill="#64748b">CAPABILITY RADAR · 学术能力画像</text>
+                <polygon points="320,167.5 348.1,183.8 348.1,216.3 320,232.5 291.9,216.3 291.9,183.8" fill="none" stroke="#d9e1ea"/>
+                <polygon points="320,135 376.3,167.5 376.3,232.5 320,265 263.7,232.5 263.7,167.5" fill="none" stroke="#d9e1ea"/>
+                <polygon points="320,102.5 404.4,151.3 404.4,248.8 320,297.5 235.6,248.8 235.6,151.3" fill="none" stroke="#d9e1ea"/>
+                <polygon points="320,70 432.6,135 432.6,265 320,330 207.4,265 207.4,135" fill="none" stroke="#d9e1ea"/>
+                <line x1="320" y1="200" x2="320" y2="70" stroke="#d9e1ea"/>
+                <line x1="320" y1="200" x2="432.6" y2="135" stroke="#d9e1ea"/>
+                <line x1="320" y1="200" x2="432.6" y2="265" stroke="#d9e1ea"/>
+                <line x1="320" y1="200" x2="320" y2="330" stroke="#d9e1ea"/>
+                <line x1="320" y1="200" x2="207.4" y2="265" stroke="#d9e1ea"/>
+                <line x1="320" y1="200" x2="207.4" y2="135" stroke="#d9e1ea"/>
+                <polygon points="320,76.5 423.6,140.2 419.1,257.2 320,310.5 218.7,258.5 229.9,148" fill="rgba(37,99,235,0.12)" stroke="#2563eb" stroke-width="2" stroke-linejoin="round"/>
+                <circle cx="320" cy="200" r="3" fill="#94a3b8"/>
+                <g fill="#2563eb">
+                    <circle cx="320" cy="76.5" r="4.5"/>
+                    <circle cx="423.6" cy="140.2" r="4.5"/>
+                    <circle cx="419.1" cy="257.2" r="4.5"/>
+                    <circle cx="320" cy="310.5" r="4.5"/>
+                    <circle cx="218.7" cy="258.5" r="4.5"/>
+                    <circle cx="229.9" cy="148" r="4.5"/>
+                </g>
+                <g font-size="13" font-weight="700" fill="#1f2937">
+                    <text x="320" y="46" text-anchor="middle">数学建模</text>
+                    <text x="448" y="124" text-anchor="start">数据分析</text>
+                    <text x="448" y="288" text-anchor="start">工程实现</text>
+                    <text x="320" y="356" text-anchor="middle">机器学习</text>
+                    <text x="192" y="288" text-anchor="end">运筹优化</text>
+                    <text x="192" y="124" text-anchor="end">可视化</text>
+                </g>
+                <g font-size="11" font-weight="800" fill="#2563eb">
+                    <text x="320" y="62" text-anchor="middle">0.95</text>
+                    <text x="448" y="140" text-anchor="start">0.92</text>
+                    <text x="448" y="304" text-anchor="start">0.88</text>
+                    <text x="320" y="372" text-anchor="middle">0.85</text>
+                    <text x="192" y="304" text-anchor="end">0.90</text>
+                    <text x="192" y="140" text-anchor="end">0.80</text>
+                </g>
+            </svg>
+            <figcaption class="caption">能力画像：以数学建模与数据分析为核心，运筹优化、工程实现与可视化协同构建完整闭环。</figcaption>
+        </figure>
+        <div class="hero-decor" aria-hidden="true">
+            <svg viewBox="0 0 640 400" preserveAspectRatio="xMidYMid slice">
+                <g fill="none" stroke="rgba(37,99,235,.12)" stroke-width="1.2">
+                    <path d="M-30 352 C 90 336, 180 268, 300 240 S 520 168, 670 96"/>
+                    <path d="M-30 384 C 100 372, 200 312, 320 282 S 540 216, 670 148"/>
+                    <path d="M-30 318 C 80 300, 160 228, 280 198 S 500 122, 670 46"/>
+                </g>
+                <path d="M-30 412 C 120 398, 240 354, 360 332 S 580 294, 670 270" fill="none" stroke="rgba(22,133,93,.13)" stroke-width="1.2" stroke-dasharray="5 7"/>
+                <g fill="rgba(37,99,235,.25)">
+                    <circle cx="300" cy="240" r="3.5"/>
+                    <circle cx="404" cy="184" r="3"/>
+                    <circle cx="222" cy="272" r="2.6"/>
+                </g>
+                <!-- 手账涂鸦：四角星 -->
+                <g fill="none" stroke="rgba(201,115,143,.45)" stroke-width="1.6" stroke-linecap="round">
+                    <path d="M96 64 L96 88 M82 76 L110 76"/>
+                    <path d="M540 300 L540 318 M530 309 L550 309"/>
+                </g>
+                <!-- 手账涂鸦：圆环笔触 -->
+                <circle cx="556" cy="88" r="16" fill="none" stroke="rgba(143,123,200,.4)" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="80 30" transform="rotate(-24 556 88)"/>
+                <circle cx="72" cy="300" r="11" fill="none" stroke="rgba(79,168,155,.42)" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="60 24" transform="rotate(18 72 300)"/>
+                <!-- 手账涂鸦：小爱心 -->
+                <path d="M148 140 C 142 132, 130 134, 130 144 C 130 154, 148 166, 148 166 C 148 166, 166 154, 166 144 C 166 134, 154 132, 148 140 Z" fill="rgba(201,115,143,.28)"/>
+                <path d="M470 356 C 466 350, 458 351, 458 358 C 458 365, 470 373, 470 373 C 470 373, 482 365, 482 358 C 482 351, 474 350, 470 356 Z" fill="rgba(245,217,168,.55)"/>
+                <!-- 手账涂鸦：虚线笔触 -->
+                <path d="M40 180 C 60 172, 84 172, 100 182" fill="none" stroke="rgba(196,148,96,.4)" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="1 6"/>
+                <path d="M520 220 C 540 212, 564 212, 580 222" fill="none" stroke="rgba(196,148,96,.4)" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="1 6"/>
+                <!-- 手账涂鸦：小云朵 -->
+                <path d="M580 340 C 578 332, 588 328, 594 332 C 596 324, 608 324, 610 332 C 618 332, 620 340, 614 342 L 584 342 C 578 342, 578 340, 580 340 Z" fill="rgba(143,123,200,.16)"/>
+            </svg>
+        </div>
+        <!-- 手账漂浮贴纸（梦幻微动） -->
+        <div class="doodle d1" aria-hidden="true">
+            <svg width="30" height="30" viewBox="0 0 30 30"><path d="M15 3 L17.5 12.5 L27 15 L17.5 17.5 L15 27 L12.5 17.5 L3 15 L12.5 12.5 Z" fill="rgba(245,217,168,.75)"/></svg>
+        </div>
+        <div class="doodle d2" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="7.5" fill="none" stroke="rgba(201,115,143,.5)" stroke-width="1.8" stroke-dasharray="70 26" transform="rotate(-20 10 10)"/></svg>
+        </div>
+        <div class="doodle d3" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 4 C 8 0, 2 2, 2 8 C 2 14, 12 20, 12 20 C 12 20, 22 14, 22 8 C 22 2, 16 0, 12 4 Z" fill="rgba(201,115,143,.32)"/></svg>
+        </div>
+        <div class="doodle d4" aria-hidden="true">
+            <svg width="26" height="26" viewBox="0 0 26 26"><path d="M13 2 L15 11 L24 13 L15 15 L13 24 L11 15 L2 13 L11 11 Z" fill="rgba(143,123,200,.35)"/></svg>
+        </div>
+        <div class="doodle d5" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" fill="none" stroke="rgba(79,168,155,.55)" stroke-width="1.8" stroke-dasharray="52 20" transform="rotate(15 8 8)"/></svg>
+        </div>
+    </header>
+
+    <main>
+        <!-- 01 关于我 -->
+        <section id="about" class="section alt">
+            <div class="container">
+                <span class="ghost-num" aria-hidden="true">01</span>
+        <div class="doodle s1" aria-hidden="true" style="animation: floaty 7s ease-in-out 0s infinite">
+            <svg width="26" height="26" viewBox="0 0 30 30"><path d="M15 3 L17.5 12.5 L27 15 L17.5 17.5 L15 27 L12.5 17.5 L3 15 L12.5 12.5 Z" fill="rgba(245,217,168,.8)"/></svg>
+        </div>
+        <div class="doodle s2" aria-hidden="true" style="animation: floaty 9s ease-in-out 1.2s infinite">
+            <svg width="24" height="24" viewBox="0 0 30 30"><path d="M15 26 C 6 20, 3 15, 3 10 C 3 6, 6.5 4, 9.5 4 C 12 4, 14 6, 15 8.5 C 16 6, 18 4, 20.5 4 C 23.5 4, 27 6, 27 10 C 27 15, 24 20, 15 26 Z" fill="rgba(201,115,143,.5)"/></svg>
+        </div>
+                <div class="section-head reveal">
+                    <p class="eyebrow">01 · ABOUT — 关于我</p>
+                    <h2>数理基础与工程实践之间</h2>
+                    <p>好的模型，始于对问题的诚实理解——这是我对待科研、竞赛与工程的一致态度。</p>
+                </div>
+                <div class="grid-2">
+                    <div class="info-panel reveal">
+                        <div class="info-row"><span class="k">教育背景</span><span class="v">华中农业大学 · 信息与计算科学</span></div>
+                        <div class="info-row"><span class="k">推免去向</span><span class="v accent">武汉大学 · 应用统计（2027 届）</span></div>
+                        <div class="info-row"><span class="k">政治面貌</span><span class="v">中共预备党员</span></div>
+                        <div class="info-row"><span class="k">语言水平</span><span class="v">CET-6 456 · 普通话二甲</span></div>
+                        <div class="info-row"><span class="k">常驻城市</span><span class="v">湖北 · 武汉</span></div>
+                    </div>
+                    <article class="card reveal">
+                        <div class="card-body">
+                            <h3>自我介绍</h3>
+                            <p>本科就读于华中农业大学信息与计算科学专业，GPA 3.85/4、均分 90.47，位列专业前 5%；数学功底扎实，计算机编程能力突出。</p>
+                            <p>我享受从抽象建模到工程落地的完整闭环：数学建模竞赛中的多目标优化与不确定性分析、课题组里的模型训练与机理探究、全栈项目中的接口设计与部署交付——严谨与好奇，可以同时在场。</p>
+                            <div class="tag-row">
+                                <span class="tag blue">信息与计算科学</span>
+                                <span class="tag">应用统计</span>
+                                <span class="tag coral">数学建模</span>
+                                <span class="tag amber">全栈开发</span>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- 02 成绩与荣誉 -->
+        <section id="grades" class="section">
+            <div class="container">
+                <span class="ghost-num" aria-hidden="true">02</span>
+        <div class="doodle s3" aria-hidden="true" style="animation: floaty 8s ease-in-out .6s infinite">
+            <svg width="24" height="24" viewBox="0 0 30 30"><circle cx="15" cy="15" r="10" fill="none" stroke="rgba(143,123,200,.55)" stroke-width="2" stroke-dasharray="5 4"/></svg>
+        </div>
+        <div class="doodle s4" aria-hidden="true" style="animation: floaty 10s ease-in-out 1.8s infinite">
+            <svg width="20" height="20" viewBox="0 0 30 30"><path d="M15 5 V25 M5 15 H25" stroke="rgba(79,168,155,.6)" stroke-width="2.4" stroke-linecap="round"/></svg>
+        </div>
+                <div class="section-head reveal">
+                    <p class="eyebrow">02 · GRADES &amp; HONORS — 成绩与荣誉</p>
+                    <h2>用数字说话的专业基础</h2>
+                    <p>数学与计算机能力突出，连续获得国家级奖学金与校级综合荣誉。</p>
+                </div>
+                <div class="grid-3 reveal" data-stagger>
+                    <article class="card">
+                        <div class="card-body">
+                            <div class="accent-bar"></div>
+                            <div class="big-value blue" data-count="3.85" data-decimals="2">3.85</div>
+                            <div class="sub-label">/4 · GPA，位列专业前 5%</div>
+                        </div>
+                    </article>
+                    <article class="card">
+                        <div class="card-body">
+                            <div class="accent-bar green"></div>
+                            <div class="big-value" data-count="90.47" data-decimals="2">90.47</div>
+                            <div class="sub-label">加权均分 · 专业排名 4/101</div>
+                        </div>
+                    </article>
+                    <article class="card">
+                        <div class="card-body">
+                            <div class="accent-bar coral"></div>
+                            <div class="big-value">95+</div>
+                            <div class="sub-label">数学与计算机能力</div>
+                        </div>
+                    </article>
+                </div>
+
+                <article class="card reveal" style="margin-top: 18px;">
+                    <div class="card-body">
+                        <h3>主要学科成绩</h3>
+                        <div class="course-grid">
+                            <div>
+                                <div class="course-row"><span class="name">金融数学 · 数据挖掘 · 高性能计算</span><span class="score">98</span></div>
+                                <div class="course-row"><span class="name">复变函数 · 离散数学 · 几何学</span><span class="score">97</span></div>
+                            </div>
+                            <div>
+                                <div class="course-row"><span class="name">概率论与数理统计</span><span class="score">96</span></div>
+                                <div class="course-row"><span class="name">信息安全数学基础 · 实变函数</span><span class="score">95</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <div class="notes reveal" style="margin-top: 18px;" data-stagger>
+                    <div class="note green">
+                        <strong>国家励志奖学金 ×3</strong>
+                        国家级奖学金
+                    </div>
+                    <div class="note">
+                        <strong>三好学生 ×3</strong>
+                        校级综合荣誉
+                    </div>
+                    <div class="note amber">
+                        <strong>学习成绩优秀团员 ×2</strong>
+                        团内荣誉称号
+                    </div>
+                    <div class="note coral">
+                        <strong>优秀班长 ×1</strong>
+                        班级工作荣誉
+                    </div>
+                </div>
+
+                <div class="photo-card reveal" style="margin-top: 18px; position: relative;">
+                    <span class="washi pink" style="top: -12px; left: 34px;" aria-hidden="true"></span>
+                    <span class="washi lav" style="top: -12px; right: 44px;" aria-hidden="true"></span>
+                    <img src="assets/honors.png" alt="本科期间奖学金与荣誉称号证书汇总：4 项奖学金、5 项荣誉称号">
+                </div>
+            </div>
+        </section>
+
+        <!-- 03 竞赛经历 -->
+        <section id="comp" class="section alt">
+            <div class="container">
+                <span class="ghost-num" aria-hidden="true">03</span>
+        <div class="doodle s2" aria-hidden="true" style="animation: floaty 9s ease-in-out .3s infinite">
+            <svg width="24" height="24" viewBox="0 0 30 30"><path d="M15 26 C 6 20, 3 15, 3 10 C 3 6, 6.5 4, 9.5 4 C 12 4, 14 6, 15 8.5 C 16 6, 18 4, 20.5 4 C 23.5 4, 27 6, 27 10 C 27 15, 24 20, 15 26 Z" fill="rgba(201,115,143,.5)"/></svg>
+        </div>
+        <div class="doodle s3" aria-hidden="true" style="animation: floaty 8s ease-in-out 1.5s infinite">
+            <svg width="26" height="26" viewBox="0 0 30 30"><path d="M15 3 L17.5 12.5 L27 15 L17.5 17.5 L15 27 L12.5 17.5 L3 15 L12.5 12.5 Z" fill="rgba(245,217,168,.8)"/></svg>
+        </div>
+                <div class="section-head reveal">
+                    <p class="eyebrow">03 · COMPETITIONS — 竞赛经历</p>
+                    <h2>核心获奖情况</h2>
+                    <p>从美赛特等奖提名到连续两届全国大学生数学竞赛获奖，体现数学基础与数模建模能力；点击左侧按钮查看每一项的方法与结论。</p>
+                </div>
+                <div class="result-layout reveal">
+                    <div class="dataset-panel" aria-label="竞赛奖项切换">
+                        <button class="button dataset-button active" type="button" data-key="mcm">MCM 2026 · 特等奖提名</button>
+                        <button class="button dataset-button" type="button" data-key="math25">数学竞赛 B 类 · 一等奖</button>
+                        <button class="button dataset-button" type="button" data-key="math24">数学竞赛 B 类 · 二等奖</button>
+                        <button class="button dataset-button" type="button" data-key="huazhong">华中杯 · 三等奖</button>
+                    </div>
+                    <article class="result-view">
+                        <div class="tab-figure active" data-key="mcm">
+                            <img src="assets/competition-mcm.png" alt="MCM 2026 · 三维 Pareto 前沿与 Exact MILP / NSGA-III / MOEA-D 算法对比">
+                        </div>
+                        <div class="tab-figure" data-key="math25">
+                            <svg viewBox="0 0 640 400" font-family="Microsoft YaHei, PingFang SC, Noto Sans CJK SC, Arial, sans-serif" role="img" aria-label="数学竞赛两届进阶">
+                                <text x="32" y="36" font-size="11" letter-spacing="3" fill="#64748b">NATIONAL MATH CONTEST · 全国大学生数学竞赛</text>
+                                <line x1="120" y1="330" x2="560" y2="330" stroke="#94a3b8" stroke-width="1.5"/>
+                                <line x1="120" y1="330" x2="120" y2="90" stroke="#94a3b8" stroke-width="1.5"/>
+                                <text x="560" y="354" text-anchor="end" font-size="12" fill="#64748b">届次 →</text>
+                                <text x="124" y="84" font-size="12" fill="#64748b">↑ 获奖等级</text>
+                                <rect x="180" y="200" width="110" height="130" rx="6" fill="#b97912" opacity=".9"/>
+                                <text x="235" y="270" text-anchor="middle" font-size="15" font-weight="800" fill="#fff">2024</text>
+                                <rect x="360" y="120" width="110" height="210" rx="6" fill="#2563eb"/>
+                                <text x="415" y="230" text-anchor="middle" font-size="15" font-weight="800" fill="#fff">2025</text>
+                                <text x="235" y="352" text-anchor="middle" font-size="13" font-weight="700" fill="#b97912">二等奖</text>
+                                <text x="415" y="352" text-anchor="middle" font-size="13" font-weight="800" fill="#2563eb">一等奖</text>
+                                <line x1="248" y1="192" x2="402" y2="112" stroke="#16855d" stroke-width="2" stroke-dasharray="7 6"/>
+                                <polygon points="402,104 388,116 410,124" fill="#16855d"/>
+                                <text x="316" y="146" text-anchor="middle" font-size="12" font-weight="800" fill="#16855d">+1 等级</text>
+                                <circle cx="415" cy="88" r="17" fill="#16855d"/>
+                                <path d="M415 79l4.1 8.4 9.2 1.3-6.7 6.5 1.6 9.2-8.2-4.4-8.2 4.4 1.6-9.2-6.7-6.5 9.2-1.3 4.1-8.4z" fill="#fff"/>
+                                <text x="120" y="386" font-size="11" fill="#64748b">连续两届获奖 · 数学 B 类 · 同年级专业第三</text>
+                            </svg>
+                        </div>
+                        <div class="tab-figure" data-key="math24">
+                            <svg viewBox="0 0 640 400" font-family="Microsoft YaHei, PingFang SC, Noto Sans CJK SC, Arial, sans-serif" role="img" aria-label="数学竞赛二等奖">
+                                <text x="32" y="36" font-size="11" letter-spacing="3" fill="#64748b">NATIONAL MATH CONTEST · 2024</text>
+                                <line x1="120" y1="330" x2="560" y2="330" stroke="#94a3b8" stroke-width="1.5"/>
+                                <line x1="120" y1="330" x2="120" y2="90" stroke="#94a3b8" stroke-width="1.5"/>
+                                <text x="560" y="354" text-anchor="end" font-size="12" fill="#64748b">届次 →</text>
+                                <text x="124" y="84" font-size="12" fill="#64748b">↑ 获奖等级</text>
+                                <rect x="230" y="210" width="180" height="120" rx="8" fill="#b97912" opacity=".9"/>
+                                <text x="320" y="278" text-anchor="middle" font-size="17" font-weight="800" fill="#fff">2024</text>
+                                <text x="320" y="352" text-anchor="middle" font-size="14" font-weight="800" fill="#b97912">数学 B 类 · 二等奖</text>
+                                <circle cx="320" cy="160" r="20" fill="#fbf3e2" stroke="#b97912" stroke-width="2"/>
+                                <text x="320" y="166" text-anchor="middle" font-size="13" font-weight="800" fill="#b97912">2</text>
+                                <text x="120" y="386" font-size="11" fill="#64748b">第十六届全国大学生数学竞赛 · 数学 B 类 · 同年级专业第三</text>
+                            </svg>
+                        </div>
+                        <div class="tab-figure" data-key="huazhong">
+                            <div class="material-frame"><img src="assets/huazhongbei.png" alt="华中杯 · 产销数据分析与线性规划求解结果可视化"></div>
+                        </div>
+                        <div class="result-meta" id="result-meta">
+                            <div>
+                                <h3 id="result-title">美国大学生数学建模竞赛 · 特等奖提名（Finalist）</h3>
+                                <p id="result-copy">运用 Python、MATLAB 搭建多目标优化与随机仿真模型，采用 NSGA-II / NSGA-III、蒙特卡洛模拟、熵权法等算法，完成地月物流系统成本—时间—环境综合优化及不确定性分析。</p>
+                            </div>
+                            <div class="score-pill" id="result-pill">Finalist · 特等奖提名</div>
+                        </div>
+                    </article>
+                </div>
+
+                <div class="photo-card reveal" style="margin-top: 18px;">
+                    <img src="assets/competitions.png" alt="竞赛经历汇总：国际级特等奖提名 1 项、国家级 2 项、省级 3 项">
+                </div>
+
+                <div class="metric-chips reveal" style="margin-top: 18px;">
+                    <span class="metric-chip green">NSGA-II / III</span>
+                    <span class="metric-chip green">蒙特卡洛模拟</span>
+                    <span class="metric-chip green">熵权法</span>
+                    <span class="metric-chip">Python / MATLAB</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 04 科研经历 -->
+        <section id="research" class="section">
+            <div class="container">
+                <span class="ghost-num" aria-hidden="true">04</span>
+        <div class="doodle s1" aria-hidden="true" style="animation: floaty 11s ease-in-out .9s infinite">
+            <svg width="20" height="20" viewBox="0 0 30 30"><path d="M15 5 V25 M5 15 H25" stroke="rgba(79,168,155,.6)" stroke-width="2.4" stroke-linecap="round"/></svg>
+        </div>
+        <div class="doodle s4" aria-hidden="true" style="animation: floaty 7s ease-in-out .2s infinite">
+            <svg width="24" height="24" viewBox="0 0 30 30"><circle cx="15" cy="15" r="10" fill="none" stroke="rgba(143,123,200,.55)" stroke-width="2" stroke-dasharray="5 4"/></svg>
+        </div>
+                <div class="section-head reveal">
+                    <p class="eyebrow">04 · RESEARCH — 科研经历</p>
+                    <h2>从领域复现到机理探究</h2>
+                    <p>四段科研经历覆盖计算机视觉前沿方向、机器学习理论机理、目标检测工程实践与方法复现优化。</p>
+                </div>
+                <div class="grid-2">
+                    <article class="card figure-card reveal">
+                        <svg viewBox="0 0 640 400" font-family="Microsoft YaHei, PingFang SC, Noto Sans CJK SC, Arial, sans-serif" role="img" aria-label="组合图像检索研究框架">
+                            <text x="32" y="44" font-size="11" letter-spacing="3" fill="#64748b">COMBINED IMAGE RETRIEVAL · 研究框架</text>
+                            <g>
+                                <rect x="48" y="140" width="112" height="86" rx="10" fill="#fff" stroke="#d9e1ea" stroke-width="1.5"/>
+                                <rect x="66" y="160" width="76" height="46" rx="4" fill="#f5f7fb" stroke="#d9e1ea"/>
+                                <circle cx="86" cy="176" r="6" fill="#94a3b8"/>
+                                <polygon points="70,202 88,182 100,196 112,184 134,202" fill="#cbd5e1"/>
+                            </g>
+                            <g>
+                                <rect x="216" y="140" width="112" height="86" rx="10" fill="#fff" stroke="#d9e1ea" stroke-width="1.5"/>
+                                <rect x="238" y="158" width="68" height="20" rx="4" fill="#edf3ff"/>
+                                <text x="272" y="172" text-anchor="middle" font-size="10" fill="#2563eb">文本条件</text>
+                                <rect x="238" y="186" width="68" height="20" rx="4" fill="#eef6f1"/>
+                                <text x="272" y="200" text-anchor="middle" font-size="10" fill="#16855d">图像条件</text>
+                            </g>
+                            <g>
+                                <rect x="384" y="140" width="112" height="86" rx="10" fill="#eef6f1" stroke="#16855d" stroke-width="1.5"/>
+                                <text x="440" y="172" text-anchor="middle" font-size="13" font-weight="800" fill="#16855d">SPRC 基线</text>
+                                <text x="440" y="194" text-anchor="middle" font-size="10" fill="#64748b">代码复现 · 论文梳理</text>
+                            </g>
+                            <g>
+                                <rect x="552" y="140" width="60" height="86" rx="10" fill="#fff" stroke="#2563eb" stroke-width="1.5"/>
+                                <text x="582" y="172" text-anchor="middle" font-size="12" font-weight="800" fill="#2563eb">Top-K</text>
+                                <text x="582" y="192" text-anchor="middle" font-size="10" fill="#64748b">检索结果</text>
+                            </g>
+                            <g stroke="#94a3b8" stroke-width="1.5">
+                                <line x1="160" y1="183" x2="216" y2="183"/>
+                                <line x1="328" y1="183" x2="384" y2="183"/>
+                                <line x1="496" y1="183" x2="552" y2="183"/>
+                            </g>
+                            <g fill="#94a3b8">
+                                <polygon points="216,178 208,183 216,188"/>
+                                <polygon points="384,178 376,183 384,188"/>
+                                <polygon points="552,178 544,183 552,188"/>
+                            </g>
+                            <g font-size="10" fill="#94a3b8" text-anchor="middle">
+                                <text x="104" y="246">输入</text>
+                                <text x="272" y="246">条件输入</text>
+                                <text x="440" y="246">复现与梳理</text>
+                                <text x="582" y="246">输出评估</text>
+                            </g>
+                            <line x1="48" y1="300" x2="592" y2="300" stroke="#d9e1ea"/>
+                            <text x="320" y="330" text-anchor="middle" font-size="11" fill="#64748b">2025.10 — 至今 · 湖南大学 章成源老师团队 · 课题组成员</text>
+                        </svg>
+                        <div class="card-body">
+                            <h3>组合图像检索（CIR）方向研究</h3>
+                            <p>系统学习组合图像检索领域知识，尝试完成 SPRC 基线模型代码复现，梳理领域论文研究框架；同步研习机器学习基础理论与科研论文写作范式。</p>
+                            <div class="tag-row">
+                                <span class="tag blue">组合图像检索</span>
+                                <span class="tag">SPRC 复现</span>
+                                <span class="tag blue">湖南大学</span>
+                            </div>
+                        </div>
+                    </article>
+                    <article class="card figure-card reveal">
+                        <div class="material-frame"><img src="assets/research-augment.png" alt="数据增强机理探究 · 量化变换对分类精度影响的研究时间线"></div>
+                        <div class="card-body">
+                            <h3>数据增强的数学机理探究</h3>
+                            <p>围绕训练样本量及平移、旋转、缩放等变换对分类结果的影响展开系统性分析；基于 ResNet18 完成模型训练与结果分析，综合运用 PCA、协方差分析、特征空间可视化量化不同变换的影响。</p>
+                            <div class="tag-row">
+                                <span class="tag">ResNet18</span>
+                                <span class="tag blue">PCA</span>
+                                <span class="tag blue">协方差分析</span>
+                            </div>
+                        </div>
+                    </article>
+                    <article class="card figure-card reveal">
+                        <div class="material-frame"><img src="assets/research-xray.png" alt="X 光违禁品检测 · ConvNeXt 主干 + CPCA + Multi-scale Block 改进架构"></div>
+                        <div class="card-body">
+                            <h3>X 光违禁品检测（课设）</h3>
+                            <p>独立完成数据预处理全流程；提出 ConvNeXt 主干与 Cascade-Mask-R-CNN 结合的改进方案 CPCA-Pro，引入 CPCA 注意力模块，增强对小目标、遮挡目标的特征聚焦能力。</p>
+                            <table class="vs-table">
+                                <thead>
+                                    <tr><th>方法</th><th>mAP</th><th>mAP@0.5</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="best"><td>CPCA-Pro<span class="ours">本文方案</span></td><td>0.569</td><td>0.871</td></tr>
+                                    <tr><td>ConvNeXt-s（baseline）</td><td>0.563</td><td>0.869</td></tr>
+                                    <tr><td>Swin-Transformer-S</td><td>0.532</td><td>0.866</td></tr>
+                                    <tr><td>DINO-4scale</td><td>0.531</td><td>0.839</td></tr>
+                                    <tr><td>YOLOv7-l</td><td>0.525</td><td>0.840</td></tr>
+                                    <tr><td>YOLOv8-s</td><td>0.524</td><td>0.833</td></tr>
+                                </tbody>
+                            </table>
+                            <p class="vs-note">整体检测精度：CPCA-Pro 的 mAP 达 0.569，在所有对比方法中表现最优；mAP@0.5 达 0.871，位列第一。</p>
+                            <div class="metric-chips">
+                                <span class="metric-chip">mAP = 0.569</span>
+                                <span class="metric-chip">mAP@0.5 = 0.871</span>
+                                <span class="metric-chip green">优于全部对比模型</span>
+                            </div>
+                            <div class="class-block">
+                                <div class="class-title">类别级检测精度 · 六类典型违禁品</div>
+                                <div class="class-grid">
+                                    <div class="class-cell"><span class="c">Pressure</span><span class="n">0.649</span></div>
+                                    <div class="class-cell"><span class="c">Glass</span><span class="n">0.585</span></div>
+                                    <div class="class-cell best"><span class="c">Knife</span><span class="n">0.501</span></div>
+                                    <div class="class-cell best"><span class="c">Gun</span><span class="n">0.541</span></div>
+                                    <div class="class-cell"><span class="c">OCbottle</span><span class="n">0.581</span></div>
+                                    <div class="class-cell"><span class="c">Umbrella</span><span class="n">0.642</span></div>
+                                </div>
+                                <p class="vs-note">六类典型违禁品检测中，Gun 0.541 较 YOLOv7-l（0.490）、baseline（0.517）提升显著；Knife 0.501 领先全部对比模型；OCbottle 0.581 优于全部 YOLO 系列模型。</p>
+                            </div>
+                        </div>
+                    </article>
+                    <article class="card figure-card reveal">
+                        <div class="material-frame">
+                            <img src="assets/research-hic.png" alt="单细胞 Hi-C 数据归一化方法复现与优化研究 · 多方法评估与嵌入空间对比">
+                        </div>
+                        <div class="card-body">
+                            <h3>单细胞 Hi-C 数据归一化方法复现与优化研究</h3>
+                            <p class="dev-time" style="margin-top:2px;">2026.06 — 2026.08 · 方法与复现研究</p>
+                            <p style="margin-top:8px;">围绕单细胞 Hi-C 数据高稀疏性、测序深度差异及批次效应问题，完成四个公开数据集的预处理与多方法评估；复现并优化 BandNorm，引入截尾均值估计与低可靠条带温和收缩，构建 RS-BandNorm，并参与 scVI-3D 参数调优及 Beta-VAE、Deep VAE 等模型变体实验。</p>
+                            <p style="margin-top:8px;">结合 Harmony、CellScale、BandScale、scHC-Topics 等方法的系统对比与 pseudo-bulk Hi-C 结构验证，评价不同方法的聚类与结构保持能力；全程在服务器环境完成数据处理、模型训练与结果分析，并实践人机协作的科研工作流。</p>
+                            <div class="tag-row">
+                                <span class="tag blue">单细胞 Hi-C</span>
+                                <span class="tag">RS-BandNorm</span>
+                                <span class="tag blue">scVI-3D</span>
+                                <span class="tag amber">批次效应校正</span>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- 05 项目与技术 -->
+        <section id="projects" class="section alt">
+            <div class="container">
+                <span class="ghost-num" aria-hidden="true">05</span>
+        <div class="doodle s3" aria-hidden="true" style="animation: floaty 10s ease-in-out 1.1s infinite">
+            <svg width="24" height="24" viewBox="0 0 30 30"><path d="M15 26 C 6 20, 3 15, 3 10 C 3 6, 6.5 4, 9.5 4 C 12 4, 14 6, 15 8.5 C 16 6, 18 4, 20.5 4 C 23.5 4, 27 6, 27 10 C 27 15, 24 20, 15 26 Z" fill="rgba(201,115,143,.5)"/></svg>
+        </div>
+        <div class="doodle s2" aria-hidden="true" style="animation: floaty 8s ease-in-out .4s infinite">
+            <svg width="26" height="26" viewBox="0 0 30 30"><path d="M15 3 L17.5 12.5 L27 15 L17.5 17.5 L15 27 L12.5 17.5 L3 15 L12.5 12.5 Z" fill="rgba(245,217,168,.8)"/></svg>
+        </div>
+                <div class="section-head reveal">
+                    <p class="eyebrow">05 · PROJECTS &amp; TECH — 项目与技术</p>
+                    <h2>从接口设计到部署交付</h2>
+                    <p>全栈培训期间参与真实系统开发，并用参数化思路打磨游戏 Demo——工程能力在两个方向同时生长。</p>
+                </div>
+                <div class="grid-3">
+                    <article class="card figure-card reveal">
+                        <svg viewBox="0 0 640 400" font-family="Microsoft YaHei, PingFang SC, Noto Sans CJK SC, Arial, sans-serif" role="img" aria-label="AI 题库系统全栈架构">
+                            <text x="32" y="44" font-size="11" letter-spacing="3" fill="#64748b">FULL-STACK ARCHITECTURE · AI 题库系统</text>
+                            <g>
+                                <rect x="48" y="100" width="130" height="76" rx="10" fill="#fff" stroke="#2563eb" stroke-width="1.5"/>
+                                <rect x="64" y="116" width="98" height="10" rx="3" fill="#edf3ff"/>
+                                <rect x="64" y="132" width="70" height="10" rx="3" fill="#f5f7fb"/>
+                                <rect x="64" y="148" width="84" height="10" rx="3" fill="#f5f7fb"/>
+                                <text x="113" y="196" text-anchor="middle" font-size="11" fill="#64748b">React + Antd 前端</text>
+                            </g>
+                            <g>
+                                <rect x="255" y="100" width="130" height="76" rx="10" fill="#eef6f1" stroke="#16855d" stroke-width="1.5"/>
+                                <text x="320" y="132" text-anchor="middle" font-size="14" font-weight="800" fill="#16855d">Go + Gin</text>
+                                <text x="320" y="154" text-anchor="middle" font-size="10" fill="#64748b">REST 服务 · 接口联调</text>
+                                <text x="320" y="196" text-anchor="middle" font-size="11" fill="#64748b">后端服务</text>
+                            </g>
+                            <g>
+                                <rect x="462" y="100" width="130" height="76" rx="10" fill="#fff" stroke="#d9e1ea" stroke-width="1.5"/>
+                                <text x="527" y="132" text-anchor="middle" font-size="13" font-weight="800" fill="#1f2937">LLM API</text>
+                                <text x="527" y="154" text-anchor="middle" font-size="10" fill="#64748b">单选 / 多选 / 编程题</text>
+                                <text x="527" y="196" text-anchor="middle" font-size="11" fill="#64748b">智能出题</text>
+                            </g>
+                            <g>
+                                <rect x="255" y="252" width="130" height="64" rx="10" fill="#fff" stroke="#d9e1ea" stroke-width="1.5"/>
+                                <ellipse cx="320" cy="278" rx="20" ry="11" fill="none" stroke="#2563eb" stroke-width="1.5"/>
+                                <path d="M300 278 v14 a20 11 0 0 0 40 0 v-14" fill="none" stroke="#2563eb" stroke-width="1.5"/>
+                                <text x="320" y="308" text-anchor="middle" font-size="11" fill="#64748b">SQLite 持久化</text>
+                            </g>
+                            <g stroke="#94a3b8" stroke-width="1.5" fill="none">
+                                <line x1="178" y1="138" x2="255" y2="138"/>
+                                <line x1="385" y1="138" x2="462" y2="138"/>
+                                <path d="M385 176 L 320 252"/>
+                            </g>
+                            <g fill="#94a3b8">
+                                <polygon points="255,133 247,138 255,143"/>
+                                <polygon points="462,133 454,138 462,143"/>
+                                <polygon points="326,252 314,244 320,238"/>
+                            </g>
+                            <rect x="48" y="344" width="544" height="34" rx="8" fill="#f5f7fb" stroke="#d9e1ea"/>
+                            <text x="320" y="365" text-anchor="middle" font-size="11" font-family="Consolas, monospace" fill="#64748b">POST /api/questions → 201 · GET /api/questions?page=2&amp;kw=回归 · deploy: sqlite + gin</text>
+                        </svg>
+                        <div class="material-frame"><img src="assets/project-quiz.png" alt="AI 题库生成管理系统 · 题库管理与智能出题界面"></div>
+                        <div class="card-body">
+                            <h3>AI 题库生成管理系统</h3>
+                            <p>金山办公全栈专项培训期间参与开发：负责前后端联调、接口设计与核心功能实现，独立处理跨域配置、环境变量管理与打包部署。</p>
+                            <div class="tag-row">
+                                <span class="tag blue">Go + Gin</span>
+                                <span class="tag">React</span>
+                                <span class="tag">Antd</span>
+                                <span class="tag blue">LLM API</span>
+                            </div>
+                        </div>
+                    </article>
+                    <article class="card figure-card reveal">
+                        <div class="material-frame"><img src="assets/snake-terminal.png" alt="贪吃蛇大作战 Demo 终端实机截图：三档难度菜单与 ASCII 游戏画面"></div>
+                        <div class="card-body">
+                            <h3>贪吃蛇大作战系列 Demo</h3>
+                            <p>自主开发 · C++ 实现，覆盖手动操作与 AI 寻路两个版本，全程贯彻参数化配置思路：手动版设计三档难度体系，将移动速度、成长系数、道具倍率等核心参数与核心逻辑解耦，无需修改代码即可调节游戏体感；AI 版基于改进寻路算法，将避让权重、追击优先级、转向灵敏度等行为参数可配置化，通过调参即可实现不同风格的 AI 表现。</p>
+                            <div class="tag-row">
+                                <span class="tag amber">C++</span>
+                                <span class="tag">参数化设计</span>
+                                <span class="tag blue">AI 寻路</span>
+                            </div>
+                        </div>
+                    </article>
+                    <article class="card figure-card reveal">
+                        <svg viewBox="0 0 640 400" font-family="Microsoft YaHei, PingFang SC, Noto Sans CJK SC, Arial, sans-serif" role="img" aria-label="泡泡龙消除 Demo">
+                            <text x="32" y="44" font-size="11" letter-spacing="3" fill="#64748b">BUBBLE SHOOTER · PROTOTYPE</text>
+                            <g>
+                                <circle cx="230" cy="96" r="16" fill="#2563eb"/><circle cx="262" cy="96" r="16" fill="#16855d"/>
+                                <circle cx="294" cy="96" r="16" fill="#d65a3f"/><circle cx="326" cy="96" r="16" fill="#b97912"/>
+                                <circle cx="358" cy="96" r="16" fill="#2563eb"/><circle cx="390" cy="96" r="16" fill="#93c5fd"/>
+                                <circle cx="422" cy="96" r="16" fill="#16855d"/><circle cx="454" cy="96" r="16" fill="#d65a3f"/>
+                                <circle cx="486" cy="96" r="16" fill="#b97912"/>
+                            </g>
+                            <g>
+                                <circle cx="246" cy="128" r="16" fill="#16855d"/><circle cx="278" cy="128" r="16" fill="#d65a3f"/>
+                                <circle cx="310" cy="128" r="16" fill="#b97912"/><circle cx="342" cy="128" r="16" fill="#2563eb"/>
+                                <circle cx="374" cy="128" r="16" fill="#93c5fd"/><circle cx="406" cy="128" r="16" fill="#16855d"/>
+                                <circle cx="438" cy="128" r="16" fill="#b97912"/><circle cx="470" cy="128" r="16" fill="#2563eb"/>
+                            </g>
+                            <g>
+                                <circle cx="230" cy="160" r="16" fill="#d65a3f"/><circle cx="262" cy="160" r="16" fill="#b97912"/>
+                                <circle cx="294" cy="160" r="16" fill="#2563eb"/><circle cx="326" cy="160" r="16" fill="#16855d"/>
+                                <circle cx="358" cy="160" r="16" fill="#d65a3f"/><circle cx="390" cy="160" r="16" fill="#2563eb"/>
+                                <circle cx="422" cy="160" r="16" fill="#b97912"/><circle cx="454" cy="160" r="16" fill="#16855d"/>
+                                <circle cx="486" cy="160" r="16" fill="#93c5fd"/>
+                            </g>
+                            <g>
+                                <circle cx="246" cy="192" r="16" fill="#b97912"/><circle cx="278" cy="192" r="16" fill="#2563eb"/>
+                                <circle cx="310" cy="192" r="16" fill="#93c5fd"/><circle cx="342" cy="192" r="16" fill="#d65a3f"/>
+                                <circle cx="374" cy="192" r="16" fill="#16855d"/><circle cx="406" cy="192" r="16" fill="#b97912"/>
+                                <circle cx="438" cy="192" r="16" fill="#2563eb"/>
+                            </g>
+                            <g>
+                                <circle cx="230" cy="224" r="16" fill="#2563eb"/><circle cx="262" cy="224" r="16" fill="#93c5fd"/>
+                                <circle cx="294" cy="224" r="16" fill="#16855d"/><circle cx="326" cy="224" r="16" fill="#b97912"/>
+                                <circle cx="358" cy="224" r="16" fill="#2563eb"/><circle cx="390" cy="224" r="16" fill="#d65a3f"/>
+                            </g>
+                            <line x1="320" y1="246" x2="320" y2="330" stroke="#d9e1ea" stroke-dasharray="4 4"/>
+                            <line x1="60" y1="330" x2="560" y2="330" stroke="#d9e1ea"/>
+                            <rect x="298" y="302" width="44" height="28" rx="6" fill="#1f2937"/>
+                            <circle cx="320" cy="294" r="13" fill="#2563eb"/>
+                            <circle cx="356" cy="322" r="10" fill="#93c5fd"/>
+                            <text x="370" y="326" font-size="10" fill="#64748b">next</text>
+                            <path d="M320 294 L 268 150" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="3 6"/>
+                            <path d="M268 150 L 330 224" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="3 6" opacity=".5"/>
+                            <circle cx="268" cy="150" r="4" fill="#2563eb"/>
+                            <text x="320" y="352" text-anchor="middle" font-size="10" font-weight="700" fill="#2563eb">发射位 · 底部居中</text>
+                            <text x="120" y="374" font-size="11" fill="#64748b">Python · 面向对象设计 · 完整游戏循环</text>
+                        </svg>
+                        <div class="card-body">
+                            <h3>泡泡龙休闲消除 Demo</h3>
+                            <p>沸点工作室培训项目 · Python 实现，含完整图案表现的泡泡龙休闲消除游戏原型；在培训项目框架下锻炼面向对象设计与游戏循环工程能力。</p>
+                            <div class="tag-row">
+                                <span class="tag blue">Python</span>
+                                <span class="tag">游戏原型</span>
+                                <span class="tag amber">OOP</span>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+
+                <div class="reveal" style="margin-top: 28px;">
+                    <h3 style="margin-bottom: 14px;">技术栈 <span style="font-size:12px; color:var(--blue); font-weight:800; letter-spacing:2px; margin-left:8px;">TECH STACK</span></h3>
+                    <div class="tech-wrap" data-stagger>
+                        <span class="tech-chip accent">Python</span>
+                        <span class="tech-chip accent">C++</span>
+                        <span class="tech-chip">Java</span>
+                        <span class="tech-chip">MATLAB</span>
+                        <span class="tech-chip accent">MySQL</span>
+                        <span class="tech-chip">FineBI</span>
+                        <span class="tech-chip">Kettle</span>
+                        <span class="tech-chip">Lingo</span>
+                        <span class="tech-chip">React</span>
+                        <span class="tech-chip">Go + Gin</span>
+                        <span class="tech-chip">Wireshark</span>
+                        <span class="tech-chip accent">Excel</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 06 学生工作 -->
+        <section id="campus" class="section">
+            <div class="container">
+                <span class="ghost-num" aria-hidden="true">06</span>
+        <div class="doodle s4" aria-hidden="true" style="animation: floaty 9s ease-in-out .7s infinite">
+            <svg width="20" height="20" viewBox="0 0 30 30"><path d="M15 5 V25 M5 15 H25" stroke="rgba(79,168,155,.6)" stroke-width="2.4" stroke-linecap="round"/></svg>
+        </div>
+        <div class="doodle s1" aria-hidden="true" style="animation: floaty 11s ease-in-out 1.6s infinite">
+            <svg width="24" height="24" viewBox="0 0 30 30"><circle cx="15" cy="15" r="10" fill="none" stroke="rgba(143,123,200,.55)" stroke-width="2" stroke-dasharray="5 4"/></svg>
+        </div>
+                <div class="section-head reveal">
+                    <p class="eyebrow">06 · CAMPUS LEADERSHIP — 学生工作</p>
+                    <h2>从班级到校园的组织实践</h2>
+                    <p>担任班长、公益委员、青年志愿者工作部干事期间，牵头策划并落地多项班级建设与校园公益活动。</p>
+                </div>
+                <div class="notes reveal" data-stagger>
+                    <div class="note">
+                        <strong>班长</strong>
+                        班级事务统筹、学风建设与团建策划，连接同学与学院。
+                    </div>
+                    <div class="note green">
+                        <strong>公益委员</strong>
+                        组织班级公益事务，把善意变成可执行的行动。
+                    </div>
+                    <div class="note amber">
+                        <strong>信火相传本禹志愿服务队</strong>
+                        信息学院 · 成员，赴武汉科技馆开展常态化科教志愿服务。
+                    </div>
+                    <div class="note coral">
+                        <strong>校青年志愿者工作部</strong>
+                        校级志愿事务统筹与活动执行。
+                    </div>
+                </div>
+                <div class="grid-2 reveal" style="margin-top: 18px;" data-stagger>
+                    <article class="card">
+                        <div class="card-body">
+                            <div class="big-value green" data-count="7" data-decimals="0" data-suffix=" 年">7 年</div>
+                            <div class="sub-label">志愿服务经历</div>
+                        </div>
+                    </article>
+                    <article class="card">
+                        <div class="card-body">
+                            <div class="big-value blue" data-count="1" data-decimals="0" data-suffix="k+">1k+</div>
+                            <div class="sub-label">服务人数</div>
+                        </div>
+                    </article>
+                </div>
+                <p class="lead reveal" style="margin-top: 22px; margin-bottom: 0;">
+                    作为核心负责人筹办华中农业大学与武汉科技馆首次校馆联动志愿服务项目，负责活动方案策划、志愿者招募培训、岗位调配、校地多方对接及现场秩序保障；主动对接校方与实践单位，协调场地、人员与制度资源；参与实践成果梳理与宣传推文撰写，于学院官方公众号刊发。
+                </p>
+
+                <h3 class="reveal" style="margin: 30px 0 14px;">综合发展 <span style="font-size:12px; color:var(--blue); font-weight:800; letter-spacing:2px; margin-left:8px;">SERVICE &amp; PRACTICE</span></h3>
+                <div class="dev-grid reveal" data-stagger>
+                    <div class="dev-item">
+                        <h4>01 · 志愿工作经历</h4>
+                        <div class="dev-time">信息学院“信火相传”本禹志愿服务队 · 成员</div>
+                        <a class="link-row" href="https://news.cjn.cn/whpd/yw_19947/202412/t5059416.htm" target="_blank" rel="noopener">服务队报道 ↗</a>
+                    </div>
+                    <div class="dev-item">
+                        <h4>02 · 社会实践经历</h4>
+                        <div class="dev-time">2025.07 — 2025.09 · 信息学院赴贵州暑期社会实践团</div>
+                        <a class="link-row" href="https://mp.weixin.qq.com/s/5L1xtv2fhLoBvzV2cvWaZQ" target="_blank" rel="noopener">实践推文 ↗</a>
+                    </div>
+                </div>
+
+                <div class="photo-card reveal" style="margin-top: 18px; position: relative;">
+                    <span class="washi mint" style="top: -12px; left: 40px;" aria-hidden="true"></span>
+                    <span class="washi cream" style="top: -12px; right: 36px;" aria-hidden="true"></span>
+                    <img src="assets/campus-development.jpg" alt="志愿服务与社会实践图集：校馆联动活动、贵州村超与非遗调研">
+                </div>
+
+                <div class="card reveal" style="margin-top: 18px;">
+                    <div class="card-body game-card">
+                        <div class="shot"><img src="assets/gaming.jpg" alt="游戏经历截图"></div>
+                        <div>
+                            <h3>课余 · 游戏 <span style="font-size:12px; color:var(--blue); font-weight:800; letter-spacing:2px; margin-left:8px;">OFF-DUTY</span></h3>
+                            <p>王者荣耀最高排位 80 星、巅峰赛 1800 分；球球大作战超神 100+ 星；无畏契约端游钻石、手游超凡；QQ 飞车最强车神；和平精英钻石段位；第五人格、部落冲突等开服玩家，也常玩情感对话类游戏——乐于思考与探究游戏机制，把"求解更优解"的执念也带进排位赛。</p>
+                            <div class="tag-row">
+                                <span class="tag blue">王者荣耀 · 80星</span>
+                                <span class="tag">球球大作战 · 超神100+星</span>
+                                <span class="tag amber">无畏契约 · 端游钻石/手游超凡</span>
+                                <span class="tag coral">QQ飞车 · 最强车神</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 07 联系我 -->
+        <section id="contact" class="section alt">
+            <div class="container">
+                <span class="ghost-num" aria-hidden="true">07</span>
+        <div class="doodle s2" aria-hidden="true" style="animation: floaty 8s ease-in-out .5s infinite">
+            <svg width="24" height="24" viewBox="0 0 30 30"><circle cx="15" cy="15" r="10" fill="none" stroke="rgba(143,123,200,.55)" stroke-width="2" stroke-dasharray="5 4"/></svg>
+        </div>
+        <div class="doodle s3" aria-hidden="true" style="animation: floaty 10s ease-in-out 1.3s infinite">
+            <svg width="24" height="24" viewBox="0 0 30 30"><path d="M15 26 C 6 20, 3 15, 3 10 C 3 6, 6.5 4, 9.5 4 C 12 4, 14 6, 15 8.5 C 16 6, 18 4, 20.5 4 C 23.5 4, 27 6, 27 10 C 27 15, 24 20, 15 26 Z" fill="rgba(201,115,143,.5)"/></svg>
+        </div>
+                <div class="contact-card reveal" style="position: relative;">
+                    <span class="washi lav" style="top: -13px; left: 50%; margin-left: -54px;" aria-hidden="true"></span>
+                    <span class="washi pink" style="top: -13px; left: calc(50% - 96px);" aria-hidden="true"></span>
+                    <p class="eyebrow">07 · CONTACT — 联系我</p>
+                    <h2>如果你也在寻找一位严谨、可靠、热爱解决问题的同行者</h2>
+                    <p>欢迎随时联系我——研究合作、技术交流，或者只是一杯咖啡的时间。</p>
+                    <a class="email-button" href="mailto:18772900801@163.com">18772900801@163.com</a>
+                    <p class="contact-meta">电话 18772900801 · 现居武汉 · 2027 届推免至武汉大学</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="foot-mark">吴昊</div>
+            <div class="foot-links"><a href="#about">关于</a><i>·</i><a href="#grades">成绩</a><i>·</i><a href="#comp">竞赛</a><i>·</i><a href="#research">科研</a><i>·</i><a href="#projects">项目</a><i>·</i><a href="#campus">学生工作</a><i>·</i><a href="#contact">联系</a></div>
+            <div class="foot-copy">© 2026 吴昊 · PERSONAL SITE — DESIGNED &amp; BUILT WITH CARE</div>
+        </div>
+    </footer>
+
+    <script>
+        /* ---------- 阅读进度 ---------- */
+        var progress = document.getElementById('progress');
+        function updateProgress() {
+            var h = document.documentElement;
+            var p = h.scrollTop / Math.max(1, h.scrollHeight - h.clientHeight);
+            progress.style.transform = 'scaleX(' + p + ')';
+        }
+
+        /* ---------- 导航高亮 ---------- */
+        var navLinks = Array.prototype.slice.call(document.querySelectorAll('.nav-links a[href^="#"]'));
+        var spySections = navLinks.map(function (a) { return document.querySelector(a.getAttribute('href')); }).filter(Boolean);
+        function updateSpy() {
+            var idx = -1;
+            spySections.forEach(function (s, i) {
+                if (s.getBoundingClientRect().top <= 140) idx = i;
+            });
+            navLinks.forEach(function (a, i) { a.classList.toggle('active', i === idx); });
+            movePill();
+        }
+
+        function onScroll() { updateProgress(); updateSpy(); }
+        window.addEventListener('scroll', onScroll, { passive: true });
+        onScroll();
+
+        /* ---------- 滚动显现（含错峰） ---------- */
+        document.querySelectorAll('[data-stagger]').forEach(function (box) {
+            Array.prototype.forEach.call(box.children, function (child, i) {
+                child.style.transitionDelay = (i * 80) + 'ms';
+            });
+        });
+
+        if ('IntersectionObserver' in window) {
+            var revealIO = new IntersectionObserver(function (entries) {
+                entries.forEach(function (e) {
+                    if (e.isIntersecting) {
+                        var el = e.target;
+                        var rect = el.getBoundingClientRect();
+                        el.classList.add((rect.left + rect.width / 2) < window.innerWidth * 0.5 ? 'from-left' : 'from-right');
+                        void el.offsetWidth;
+                        el.classList.add('in');
+                        revealIO.unobserve(el);
+                    }
+                });
+            }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+            document.querySelectorAll('.reveal').forEach(function (el) { revealIO.observe(el); });
+        } else {
+            document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
+        }
+
+        /* ---------- 数字滚动 ---------- */
+        function countUp(el) {
+            var target = parseFloat(el.dataset.count);
+            var decimals = parseInt(el.dataset.decimals || '0', 10);
+            var suffix = el.dataset.suffix || '';
+            var duration = 900;
+            var t0 = null;
+            function frame(t) {
+                if (!t0) t0 = t;
+                var p = Math.min(1, (t - t0) / duration);
+                var eased = 1 - Math.pow(1 - p, 3);
+                el.textContent = (target * eased).toFixed(decimals) + suffix;
+                if (p < 1) requestAnimationFrame(frame);
+            }
+            el.textContent = (0).toFixed(decimals) + suffix;
+            requestAnimationFrame(frame);
+        }
+        var countIO = new IntersectionObserver(function (entries) {
+            entries.forEach(function (e) {
+                if (e.isIntersecting && !e.target.dataset.done) {
+                    e.target.dataset.done = '1';
+                    countUp(e.target);
+                    countIO.unobserve(e.target);
+                }
+            });
+        }, { threshold: 0.4 });
+        document.querySelectorAll('[data-count]').forEach(function (el) { countIO.observe(el); });
+
+        /* ---------- 竞赛选项卡 ---------- */
+        var compData = {
+            mcm: {
+                title: '美国大学生数学建模竞赛 · 特等奖提名（Finalist）',
+                copy: '运用 Python、MATLAB 搭建多目标优化与随机仿真模型，采用 NSGA-II / NSGA-III、蒙特卡洛模拟、熵权法等算法，完成地月物流系统成本—时间—环境综合优化及不确定性分析。',
+                pill: '特等奖提名 · 国际前 1.4%',
+                pillClass: 'green'
+            },
+            math25: {
+                title: '全国大学生数学竞赛 · 数学 B 类 一等奖',
+                copy: '第十七届全国大学生数学竞赛数学 B 类一等奖，同年级专业第三；考察数学分析与高等代数等核心数理功底，较 2024 年再进一步。',
+                pill: '一等奖 · 同年级专业第三',
+                pillClass: 'blue'
+            },
+            math24: {
+                title: '全国大学生数学竞赛 · 数学 B 类 二等奖',
+                copy: '第十六届全国大学生数学竞赛数学 B 类二等奖，同年级专业第三；初次参赛即斩获佳绩，为次年夺魁打下基础。',
+                pill: '二等奖 · 同年级专业第三',
+                pillClass: 'amber'
+            },
+            huazhong: {
+                title: '“华中杯”大学生数学建模挑战赛 · 三等奖',
+                copy: '负责核心建模、数据分析与全流程代码实现：基于企业产销数据建立多约束线性规划模型求解最优产销计划，并参与设计运筹优化与大模型融合的智能决策框架。',
+                pill: '三等奖 · 前 20%',
+                pillClass: 'coral'
+            }
+        };
+
+        var tabButtons = document.querySelectorAll('.dataset-button');
+        var tabFigures = document.querySelectorAll('.tab-figure');
+        var resultMeta = document.getElementById('result-meta');
+        var resultTitle = document.getElementById('result-title');
+        var resultCopy = document.getElementById('result-copy');
+        var resultPill = document.getElementById('result-pill');
+
+        tabButtons.forEach(function (button) {
+            button.addEventListener('click', function () {
+                if (button.classList.contains('active')) return;
+                tabButtons.forEach(function (b) { b.classList.remove('active'); });
+                button.classList.add('active');
+                var key = button.dataset.key;
+                tabFigures.forEach(function (f) { f.classList.toggle('active', f.dataset.key === key); });
+                var data = compData[key];
+                resultMeta.classList.add('swap');
+                setTimeout(function () {
+                    resultTitle.textContent = data.title;
+                    resultCopy.textContent = data.copy;
+                    resultPill.textContent = data.pill;
+                    resultPill.className = 'score-pill ' + (data.pillClass || 'green');
+                    resultMeta.classList.remove('swap');
+                }, 180);
+            });
+        });
+
+        /* ================= 微交互升级层 ================= */
+
+        /* ---- 导航滑动胶囊（scrollspy 联动） ---- */
+        function movePill() {
+            var wrap = document.querySelector('.nav-links');
+            if (!wrap) return;
+            var pill = wrap.querySelector('.nav-pill');
+            if (!pill) {
+                pill = document.createElement('span');
+                pill.className = 'nav-pill';
+                wrap.appendChild(pill);
+            }
+            var active = wrap.querySelector('a.active');
+            if (!active) { pill.style.opacity = '0'; return; }
+            pill.style.opacity = '1';
+            pill.style.width = active.offsetWidth + 'px';
+            pill.style.height = active.offsetHeight + 'px';
+            pill.style.transform = 'translate(' + active.offsetLeft + 'px,' + active.offsetTop + 'px)';
+        }
+
+        (function () {
+            var root = document.documentElement;
+            root.classList.add('js');
+            var mq = window.matchMedia ? window.matchMedia.bind(window) : function () { return { matches: false }; };
+            var fine = mq('(hover: hover) and (pointer: fine)').matches;
+            var reduce = mq('(prefers-reduced-motion: reduce)').matches;
+
+            /* ---- Hero 入场编排 ---- */
+            var hero = document.querySelector('.hero');
+            if (hero) {
+                var heroTitle = hero.querySelector('h1');
+                if (heroTitle && /<br\s*\/?>/i.test(heroTitle.innerHTML)) {
+                    var heroLines = heroTitle.innerHTML.split(/<br\s*\/?>/i);
+                    heroTitle.innerHTML = heroLines.map(function (line, i) {
+                        return '<span class="line-mask"><span class="line-inner" style="animation-delay:' + (140 + i * 140) + 'ms">' + line.replace(/^\s+|\s+$/g, '') + '</span></span>';
+                    }).join('');
+                }
+                [['.eyebrow', 60], ['.lead', 520], ['.hero-actions', 660], ['.stats', 820]].forEach(function (pair) {
+                    var el = hero.querySelector(pair[0]);
+                    if (el) {
+                        el.classList.add('hero-anim');
+                        el.style.animationDelay = pair[1] + 'ms';
+                    }
+                });
+                setTimeout(function () { hero.classList.add('hero-in'); }, 2400);
+                requestAnimationFrame(function () {
+                    requestAnimationFrame(function () { hero.classList.add('hero-in'); });
+                });
+                hero.addEventListener('animationend', function (e) {
+                    if (e.animationName === 'heroIn') { e.target.classList.remove('hero-anim'); }
+                });
+            }
+
+            /* ---- Hero 视觉滚动视差 ---- */
+            if (fine && !reduce) {
+                var heroVisual = document.querySelector('.hero-visual');
+                if (heroVisual) {
+                    var paraTick = false;
+                    var paraUpdate = function () {
+                        heroVisual.style.setProperty('--py', (window.scrollY * 0.055).toFixed(1) + 'px');
+                        paraTick = false;
+                    };
+                    window.addEventListener('scroll', function () {
+                        if (!paraTick) { paraTick = true; requestAnimationFrame(paraUpdate); }
+                    }, { passive: true });
+                    paraUpdate();
+                }
+            }
+
+            window.addEventListener('resize', movePill);
+        })();
+    </script>
+</body>
+</html>
